@@ -1,0 +1,126 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // Task triggered by "Buttons"
+        {
+            "label": "Initialize",
+            "type": "shell",
+            "command": "west init -l project",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true
+            },
+            "dependsOn": "Clean West",
+            "problemMatcher": []
+        },
+        {
+            "label": "Update",
+            "type": "shell",
+            "command": "west update",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean West",
+            "type": "shell",
+            "command": "rm -rf .west build modules zephyr bootloader",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build HE",
+            "type": "shell",
+            "command": "west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/he_app",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Flash HE",
+            "type": "shell",
+            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ${ALIF_SE_TOOLS}/build/images/he_app.bin && cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${workspaceFolder}/tools/alif/e7_he.json && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
+            "group": "test",
+        },
+                {
+            "label": "Build HP",
+            "type": "shell",
+            "command": "west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/hp_app",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Flash HP",
+            "type": "shell",
+            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ${ALIF_SE_TOOLS}/build/images/hp_app.bin && cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${workspaceFolder}/tools/alif/e7_hp.json && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
+            "group": "test",
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": [
+                "rm -rf build",
+                "sudo rm -rf ${ALIF_SE_TOOLS}/build/*"
+            ],
+            "group": "build",
+            "presentation": {
+                "clear": true
+            },
+        },
+        // Task triggered by "F1 -> run Task" 
+        {
+            "label": "Maintenance",
+            "type": "shell",
+            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/maintenance",
+            "group": "test",
+        },
+        {
+            "label": "Erase MRAM",
+            "type": "shell",
+            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -e APP",
+            "group": "build",
+        },
+        {
+            "label": "Build stubs",
+            "type": "shell",
+            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${ALIF_SE_TOOLS}/build/config/app-cpu-stubs.json",
+            "group": {
+                "kind": "build",
+            },
+        },
+        {
+            "label": "Build and Flash stubs",
+            "type": "shell",
+            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
+            "group": {
+                "kind": "build",
+            },
+            "dependsOn": [
+                "Build stubs"
+            ],
+        },
+        {
+            "label": "fetch HAL infineon blobs",
+            "type": "shell",
+            "command": "west blobs fetch hal_infineon",
+            "group": {
+                "kind": "build",
+            },
+        }
+    ],
+}

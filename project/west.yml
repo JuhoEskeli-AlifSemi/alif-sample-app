@@ -1,0 +1,39 @@
+manifest:
+    
+  remotes:
+    - name: alif
+      url-base: https://github.com/alifsemi
+    - name: armmbed
+      url-base: https://github.com/ARMmbed
+    - name: pacotte
+      url-base: https://github.com/pa-cotte
+
+  projects:
+    - name: zephyr
+      remote: alif
+      revision: main
+      repo-path: zephyr_alif_2.0
+      import:
+        name-allowlist:
+          - segger       
+          - liblc3
+          - mbedtls
+          - hal_alif_2.0    
+          - hal_ethos_u
+
+    - name: mcuboot_alif
+      remote: alif
+      repo-path: mcuboot_alif
+      path: bootloader/mcuboot
+      revision: zas-2.x
+
+    - name: cmsis_alif
+      remote: alif
+      revision: 85f6b92af0f6ac72594d391f895c45cc30847e41
+      path: modules/hal/cmsis
+      groups:
+         - hal
+       
+  self:
+    path: alif
+    west-commands: scripts/west-commands.yml
