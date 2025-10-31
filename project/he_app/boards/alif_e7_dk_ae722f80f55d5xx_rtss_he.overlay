@@ -1,0 +1,38 @@
+/ {
+	chosen {
+		zephyr,console = &uart4;
+		zephyr,shell-uart = &uart4;
+	};
+};
+
+&uart4 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_gpio0>;
+};
+
+&ns {
+	status = "okay";
+};
+
+sdhc: &sdhc {
+	status = "okay";
+
+	mmc {
+		status = "disabled";
+	};
+
+	/* Wi-Fi configuration */
+	airoc-wifi {
+		status = "okay";
+		compatible = "infineon,airoc-wifi";
+
+		/* Wi-Fi control gpios */
+		wifi-reg-on-gpios    = <&gpio0 1 GPIO_ACTIVE_HIGH>;  /* WL_REG_ON */
+		wifi-host-wake-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;  /* WL_HOST_WAKE OOB - active high for falling edge trigger */
+	};
+};
