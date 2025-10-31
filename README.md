@@ -28,6 +28,7 @@ When starting up with the Murata 1LV driver, it crashes at `k_event_init(&emmc->
 
 ### Steps to Reproduce
 
+
 1. Open the project in the `devcontainer` using VS Code.
 2. Run the **Initialize** task (available via the button at the bottom of VS Code).
 3. Run the **Update** task.
@@ -36,6 +37,8 @@ When starting up with the Murata 1LV driver, it crashes at `k_event_init(&emmc->
 6. Run the **Flash HE** task.
 7. Start the debugger task `ALIF E7 DK RTSS HE` with vscode
 8. Pause the debugger and watch the callstack
+
+**Note:** To ensure the system runs in single-core mode (HE only), execute the **Erase MRAM** task before reproduce steps.
 
 ```
 arch_system_halt@0x800313ca (/workspaces/alif-sample-app/zephyr/kernel/fatal.c:30)
