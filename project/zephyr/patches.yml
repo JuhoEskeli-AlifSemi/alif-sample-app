@@ -1,0 +1,27 @@
+patches:
+  - path: zephyr/boards-alif-e7-dk-Revert-UART-inversion-for-console.patch
+    sha256sum: 98acd55fc03a557b306fe2c8b276554c1c6215c575c63dee30d51e1d822f355f
+    module: zephyr
+    author: Jeremie Patron
+    email: jeremie.patron@pa.cotte.fr
+    date: 2025-10-22
+    upstreamable: false
+    merge-pr: https://github.com/alifsemi/zephyr_alif_2.0/pull/NA
+    merge-status: false
+    apply-command: git apply
+    comments: |
+      boards: alif: e7_dk: Revert UART inversion for console/shell
+
+      Revert UART console assignment to match Zephyr Alif 1.3 behavior:
+      - RTSS-HE (Asterix): UART4 for console/shell (was UART2 in 2.0)
+      - RTSS-HP (Obelix): UART2 for console/shell (was UART4 in 2.0)
+
+      Between Zephyr Alif SDK 1.3 and 2.0, the UART assignments for console
+      and shell were inverted on E7 DK boards, breaking existing hardware
+      connections and causing shell input to stop working.
+
+      This patch maintains hardware compatibility with existing board
+      connections and fixes shell input issues on RTSS-HE where UART2 was
+      incorrectly assigned in Zephyr Alif SDK 2.0.
+
+      Fixes: Shell input not working on alif_e7_dk RTSS-HE

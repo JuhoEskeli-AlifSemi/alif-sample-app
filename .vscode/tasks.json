@@ -103,6 +103,18 @@
         },
         // Task triggered by "F1 -> run Task" 
         {
+            "label": "Patch",
+            "type": "shell",
+            "command": "west patch -b zephyr/patches -l zephyr/patches.yml -sm project apply",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true,
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Clean West",
             "type": "shell",
             "command": "rm -rf .west build modules zephyr bootloader",

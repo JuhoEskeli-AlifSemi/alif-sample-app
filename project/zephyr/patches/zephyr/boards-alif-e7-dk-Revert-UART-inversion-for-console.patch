@@ -1,0 +1,76 @@
+From 89849597267f6f2531b4025d99c46ba7ca620ea8 Mon Sep 17 00:00:00 2001
+From: Jeremie Patron <jeremie.patron@pa.cotte.fr>
+Date: Wed, 22 Oct 2025 13:15:19 +0000
+Subject: [PATCH] boards: alif: e7_dk: Revert UART inversion for console
+
+Revert the UART console assignment change introduced in Zephyr Alif 2.0
+to maintain compatibility with Zephyr Alif 1.3:
+
+- RTSS-HE (Asterix): Use UART4 for console/shell (was UART2 in 2.0)
+- RTSS-HP (Obelix): Use UART2 for console/shell (was UART4 in 2.0)
+
+This fixes shell input not working on Asterix RTSS-HE due to UART
+mismatch between DTS configuration and hardware connections.
+
+Between Zephyr Alif SDK 1.3 and 2.0, the UART assignments for console
+and shell were inverted on E7 DK boards, breaking existing hardware
+connections and causing shell input to stop working.
+
+Fixes: Shell input not working on alif_e7_dk RTSS-HE
+
+Signed-off-by: Jeremie Patron <jeremie.patron@pa.cotte.fr>
+---
+ .../alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_he.dts  | 6 +++---
+ .../alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_hp.dts  | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_he.dts b/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_he.dts
+index adeeacb7496..ae1d7033df1 100644
+--- a/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_he.dts
++++ b/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_he.dts
+@@ -18,8 +18,8 @@
+ 		zephyr,flash = &mram_storage;
+ 		zephyr,code-partition = &slot0_partition;
+ 		zephyr,sram = &dtcm;
+-		zephyr,console = &uart2;
+-		zephyr,shell-uart = &uart2;
++		zephyr,console = &uart4;
++		zephyr,shell-uart = &uart4;
+ 	};
+ 
+ 	aliases {
+@@ -52,6 +52,6 @@
+ 	status = "okay";
+ };
+ 
+-&uart2 {
++&uart4 {
+ 	status = "okay";
+ };
+diff --git a/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_hp.dts b/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_hp.dts
+index c9fcfbdb1a8..929985dfd2b 100644
+--- a/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_hp.dts
++++ b/boards/alif/alif_e7_dk/alif_e7_dk_ae722f80f55d5xx_rtss_hp.dts
+@@ -18,8 +18,8 @@
+ 		zephyr,flash = &mram_storage;
+ 		zephyr,code-partition = &slot0_partition;
+ 		zephyr,sram = &dtcm;
+-		zephyr,console = &uart4;
+-		zephyr,shell-uart = &uart4;
++		zephyr,console = &uart2;
++		zephyr,shell-uart = &uart2;
+ 	};
+ 
+ 	aliases {
+@@ -59,7 +59,7 @@
+ 	status = "okay";
+ };
+ 
+-&uart4 {
++&uart2 {
+ 	status = "okay";
+ };
+ 
+-- 
+2.34.1
+
