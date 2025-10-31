@@ -28,6 +28,18 @@
             "problemMatcher": []
         },
         {
+            "label": "Blobs",
+            "type": "shell",
+            "command": "west blobs fetch hal_infineon",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Clean West",
             "type": "shell",
             "command": "rm -rf .west build modules zephyr bootloader",
@@ -55,7 +67,7 @@
             "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ${ALIF_SE_TOOLS}/build/images/he_app.bin && cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${workspaceFolder}/tools/alif/e7_he.json && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
             "group": "test",
         },
-                {
+        {
             "label": "Build HP",
             "type": "shell",
             "command": "west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/hp_app",
