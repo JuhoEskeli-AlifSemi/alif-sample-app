@@ -11,7 +11,7 @@ manifest:
   projects:
     - name: zephyr
       remote: alif
-      revision: main
+      revision: 16e08c47ec351b91045c35c8764c2aa4a3d0a372
       repo-path: zephyr_alif_2.0
       import:
         name-allowlist:
