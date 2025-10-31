@@ -37,4 +37,6 @@ However, if the HE core is manually configured to use `uart4` (via `project/he_a
 6. Open `/dev/ttyACM1`. You should see logs like `<inf> app: Blink !` appearing every 500 ms.
 7. **No logs displayed**
 
+**Note:** To ensure the system runs in single-core mode (HE only), execute the **Erase MRAM** task before reproduce steps.
+
 If you switch from `uart2` to `uart4` with `project/he_app/boards/alif_e7_dk_ae722f80f55d5xx_rtss_he.overlay` then logs are displayed.  
