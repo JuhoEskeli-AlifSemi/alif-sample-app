@@ -14,7 +14,6 @@ auto main() -> int
 
   k_msleep(1000);
 
-  
   if (!gpio_is_ready_dt(&led))
   {
     LOG_ERR("Led not ready\n");
@@ -30,6 +29,7 @@ auto main() -> int
 
   while (true)
   {
+    LOG_INF("Blink from HP!");
     ret = gpio_pin_toggle_dt(&led);
     if (ret < 0)
     {
