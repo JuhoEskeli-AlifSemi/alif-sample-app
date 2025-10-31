@@ -64,8 +64,13 @@
         {
             "label": "Flash HE",
             "type": "shell",
-            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ${ALIF_SE_TOOLS}/build/images/he_app.bin && cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${workspaceFolder}/tools/alif/e7_he.json && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
+            "command": "bash",
+            "args": [
+                "-lc",
+                "sudo cp -f \"${workspaceFolder}/build/zephyr/zephyr.bin\" \"${env:ALIF_SE_TOOLS}/build/images/he_app.bin\" && cd \"${env:ALIF_SE_TOOLS}\" && sudo -E \"${env:ALIF_SE_TOOLS}/tools-config\" -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-gen-toc\" -f \"${workspaceFolder}/tools/alif/e7_he.json\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-write-mram\" -p"
+            ],
             "group": "test",
+            "problemMatcher": []
         },
         {
             "label": "Build HP",
@@ -79,8 +84,13 @@
         {
             "label": "Flash HP",
             "type": "shell",
-            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ${ALIF_SE_TOOLS}/build/images/hp_app.bin && cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${workspaceFolder}/tools/alif/e7_hp.json && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
+            "command": "bash",
+            "args": [
+                "-lc",
+                "sudo cp -f \"${workspaceFolder}/build/zephyr/zephyr.bin\" \"${env:ALIF_SE_TOOLS}/build/images/hp_app.bin\" && cd \"${env:ALIF_SE_TOOLS}\" && sudo -E \"${env:ALIF_SE_TOOLS}/tools-config\" -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-gen-toc\" -f \"${workspaceFolder}/tools/alif/e7_hp.json\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-write-mram\" -p"
+            ],
             "group": "test",
+            "problemMatcher": []
         },
         {
             "label": "Clean",
