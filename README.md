@@ -33,14 +33,13 @@ However, if the HE core is manually configured to use `uart4` (via `project/he_a
 2. Run the **Initialize** task (available via the button at the bottom of VS Code).
 3. Run the **Update** task.
 4. Run the **Patch** task
-5. Run the **Build HE** task.
-6. Run the **Flash HE** task.
-7. Open `/dev/ttyACM1`. You should see logs like `<inf> app: Blink from HE!` appearing every 500 ms.
-8. Run the **Build HP** task.
-9. Run the **Flash HP** task.
-10. **No logs displayed for HE**
-11. logs displayed for HP `<inf> app: Blink from HP!` on the other uart
+5. Run the **Configure** task and select `HE & HP`
+5. Run the **Build** task.
+6. Run the **Flash** task.
+7. Open `/dev/ttyACM1`. 
+    - (UART 4) You should see logs like `<inf> app: Blink from HE!` appearing every 500 ms.
+    - (UART 2) You should see logs like `<inf> app: Blink from HP!` appearing every 500 ms.
 
-**Note:** To ensure the system runs in single-core mode (HE only), execute the **Erase MRAM** task before reproduce steps.
+## Fix
 
-If you switch from `uart2` to `uart4` with `project/he_app/boards/alif_e7_dk_ae722f80f55d5xx_rtss_he.overlay` then logs are displayed.  
+The issue was caused by the workflow that builds HE and HP with TOC for a single core. With the fix from the template branch, it’s now working correctly.
