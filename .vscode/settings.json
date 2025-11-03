@@ -49,27 +49,18 @@
             "task": "Update"
         },
         {
-            "label": "$(symbol-property) Build & Flash ALL",
-            "task": "Build & Flash ALL",
+            "label": "$(symbol-property) Configure",
+            "task": "Configure",
+            "tooltip": "Select core configuration"
         },
         {
-            "label": "$(symbol-property) Build HE",
-            "task": "Build HE",
+            "label": "$(symbol-property) Build",
+            "task": "Build",
             "tooltip": "Build current configuration (Ctrl+Maj+B)"
         },
         {
-            "label": "$(rocket) Flash HE",
-            "task": "Flash HE",
-            "tooltip": "Flash current configuration or run it on native sim"
-        },
-        {
-            "label": "$(symbol-property) Build HP",
-            "task": "Build HP",
-            "tooltip": "Build current configuration (Ctrl+Maj+B)"
-        },
-        {
-            "label": "$(rocket) Flash HP",
-            "task": "Flash HP",
+            "label": "$(rocket) Flash",
+            "task": "Flash",
             "tooltip": "Flash current configuration or run it on native sim"
         },
         {

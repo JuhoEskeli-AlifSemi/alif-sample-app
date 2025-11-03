@@ -40,6 +40,69 @@
             "problemMatcher": []
         },
         {
+            "label": "Configure",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "mkdir -p build && echo \"${input:coreConfiguration}\" > build/.config && echo \"Configuration set to: ${input:coreConfiguration}\""
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": [
+                "Clean",
+                "Erase MRAM"
+            ],
+            "presentation": {
+                "clear": true
+            },
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "CONFIG=$(cat build/.config 2>/dev/null) && case \"$CONFIG\" in he) echo Building HE only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/he_app -d build/he;; hp) echo Building HP only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/hp_app -d build/hp;; he_hp) echo Building HE and HP... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/he_app -d build/he && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/hp_app -d build/hp;; *) echo Error: Unknown configuration && exit 1;; esac"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "Flash",
+            "type": "shell",
+            "command": "sudo ./app-write-mram -p",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] Gen TOC"
+            ]
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": [
+                "rm -rf build",
+                "sudo rm -rf ${ALIF_SE_TOOLS}/build/images/he_app.bin",
+                "sudo rm -rf ${ALIF_SE_TOOLS}/build/images/hp_app.bin"
+            ],
+            "group": "build",
+            "presentation": {
+                "clear": true
+            },
+        },
+        // Task triggered by "F1 -> run Task" 
+        {
             "label": "Clean West",
             "type": "shell",
             "command": "rm -rf .west build modules zephyr bootloader",
@@ -53,75 +116,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Build HE",
-            "type": "shell",
-            "command": "west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/he_app",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "label": "Build & Flash ALL",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "dependsOn": [
-                "Build HE",
-                "Flash HE",
-                "Build HP",
-                "Flash HP"
-            ],
-            "dependsOrder": "sequence"
-        },
-        {
-            "label": "Build HP",
-            "type": "shell",
-            "command": "west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/hp_app",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
-            "label": "Flash HE",
-            "type": "shell",
-            "command": "sudo ./app-write-mram -p",
-            "group": "build",
-            "options": {
-                "cwd": "${env:ALIF_SE_TOOLS}"
-            },
-            "dependsOn": [
-                "[subtask] Gen HE TOC"
-            ],
-        },
-        {
-            "label": "Flash HP",
-            "type": "shell",
-            "command": "sudo ./app-write-mram -p",
-            "group": "build",
-            "options": {
-                "cwd": "${env:ALIF_SE_TOOLS}"
-            },
-            "dependsOn": [
-                "[subtask] Gen HP TOC"
-            ],
-        },
-        {
-            "label": "Clean",
-            "type": "shell",
-            "command": [
-                "rm -rf build",
-                "sudo rm -rf ${ALIF_SE_TOOLS}/build/*"
-            ],
-            "group": "build",
-            "presentation": {
-                "clear": true
-            },
-        },
-        // Task triggered by "F1 -> run Task" 
-        {
             "label": "Maintenance",
             "type": "shell",
             "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/maintenance",
@@ -134,25 +128,6 @@
             "group": "build",
             "dependsOn": [
                 "tools-config"
-            ],
-        },
-        {
-            "label": "Build stubs",
-            "type": "shell",
-            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-gen-toc -f ${ALIF_SE_TOOLS}/build/config/app-cpu-stubs.json",
-            "group": {
-                "kind": "build",
-            },
-        },
-        {
-            "label": "Build and Flash stubs",
-            "type": "shell",
-            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -p",
-            "group": {
-                "kind": "build",
-            },
-            "dependsOn": [
-                "Build stubs"
             ],
         },
         {
@@ -174,65 +149,58 @@
             },
         },
         {
-            "label": "[subtask] Copy HP .bin",
+            "label": "[subtask] Copy .bin",
             "type": "shell",
-            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ./build/images/hp_app.bin",
+            "command": "sh",
+            "args": [
+                "-c",
+                "CONFIG=$(cat ${workspaceFolder}/build/.config 2>/dev/null || echo he_hp) && case \"$CONFIG\" in he) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin;; hp) sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_hp) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin && sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; *) echo Error: Unknown configuration && exit 1;; esac"
+            ],
             "group": "build",
             "options": {
                 "cwd": "${env:ALIF_SE_TOOLS}"
             },
             "dependsOn": [
                 "[subtask] tools-config"
-            ],
+            ]
         },
         {
-            "label": "[subtask] Copy HE .bin",
+            "label": "[subtask] Gen TOC",
             "type": "shell",
-            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ./build/images/he_app.bin",
+            "command": "sh",
+            "args": [
+                "-c",
+                "CONFIG=$(cat ${workspaceFolder}/build/.config 2>/dev/null || echo he_hp) && sudo ./app-gen-toc -f ${workspaceFolder}/tools/alif/e7_${CONFIG}.json"
+            ],
             "group": "build",
             "options": {
                 "cwd": "${env:ALIF_SE_TOOLS}"
             },
             "dependsOn": [
-                "[subtask] tools-config"
-            ],
-        },
-        {
-            "label": "[subtask] Gen HP TOC",
-            "type": "shell",
-            "command": "sudo ./app-gen-toc -f ${workspaceFolder}/tools/alif/e7_hp.json",
-            "group": "build",
-            "options": {
-                "cwd": "${env:ALIF_SE_TOOLS}"
-            },
-            "dependsOn": [
-                "[subtask] Copy HP .bin"
-            ],
-        },
-        {
-            "label": "[subtask] Gen HE TOC",
-            "type": "shell",
-            "command": "sudo ./app-gen-toc -f ${workspaceFolder}/tools/alif/e7_he.json",
-            "group": "build",
-            "options": {
-                "cwd": "${env:ALIF_SE_TOOLS}"
-            },
-            "dependsOn": [
-                "[subtask] Copy HE .bin"
-            ],
+                "[subtask] Copy .bin"
+            ]
         },
     ],
     "inputs": [
         {
             "type": "pickString",
-            "id": "board_test",
-            "description": "Target board",
+            "id": "coreConfiguration",
+            "description": "Core configuration",
             "options": [
-                "native_sim",
-                "alif_e7_dk/ae722f80f55d5xx/rtss_he",
-                "alif_e7_dk/ae722f80f55d5xx/rtss_hp"
+                {
+                    "label": "HE only",
+                    "value": "he"
+                },
+                {
+                    "label": "HP only",
+                    "value": "hp"
+                },
+                {
+                    "label": "HE & HP",
+                    "value": "he_hp"
+                }
             ],
-            "default": "native_sim"
-        },
+            "default": "he_hp",
+        }
     ]
 }
