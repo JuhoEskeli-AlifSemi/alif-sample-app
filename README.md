@@ -32,9 +32,10 @@ When starting up with the Murata 1LV driver, it crashes at `k_event_init(&emmc->
 1. Open the project in the `devcontainer` using VS Code.
 2. Run the **Initialize** task (available via the button at the bottom of VS Code).
 3. Run the **Update** task.
-4. Run the **Blob** task
-5. Run the **Build HE** task.
-6. Run the **Flash HE** task.
+4. Run the **Blob** task.
+5. Run the **Configure** task, select `HE & HP`
+5. Run the **Build** task.
+6. Run the **Flash** task.
 7. Start the debugger task `ALIF E7 DK RTSS HE` with vscode
 8. Pause the debugger and watch the callstack
 
