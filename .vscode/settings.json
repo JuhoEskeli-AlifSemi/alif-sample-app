@@ -49,6 +49,10 @@
             "task": "Update"
         },
         {
+            "label": "$(symbol-property) Build & Flash ALL",
+            "task": "Build & Flash ALL",
+        },
+        {
             "label": "$(symbol-property) Build HE",
             "task": "Build HE",
             "tooltip": "Build current configuration (Ctrl+Maj+B)"

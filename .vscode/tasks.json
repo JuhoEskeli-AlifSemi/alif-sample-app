@@ -62,15 +62,18 @@
             },
         },
         {
-            "label": "Flash HE",
-            "type": "shell",
-            "command": "bash",
-            "args": [
-                "-lc",
-                "sudo cp -f \"${workspaceFolder}/build/zephyr/zephyr.bin\" \"${env:ALIF_SE_TOOLS}/build/images/he_app.bin\" && cd \"${env:ALIF_SE_TOOLS}\" && sudo -E \"${env:ALIF_SE_TOOLS}/tools-config\" -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-gen-toc\" -f \"${workspaceFolder}/tools/alif/e7_he.json\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-write-mram\" -p"
+            "label": "Build & Flash ALL",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "Build HE",
+                "Flash HE",
+                "Build HP",
+                "Flash HP"
             ],
-            "group": "test",
-            "problemMatcher": []
+            "dependsOrder": "sequence"
         },
         {
             "label": "Build HP",
@@ -82,15 +85,28 @@
             },
         },
         {
+            "label": "Flash HE",
+            "type": "shell",
+            "command": "sudo ./app-write-mram -p",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] Gen HE TOC"
+            ],
+        },
+        {
             "label": "Flash HP",
             "type": "shell",
-            "command": "bash",
-            "args": [
-                "-lc",
-                "sudo cp -f \"${workspaceFolder}/build/zephyr/zephyr.bin\" \"${env:ALIF_SE_TOOLS}/build/images/hp_app.bin\" && cd \"${env:ALIF_SE_TOOLS}\" && sudo -E \"${env:ALIF_SE_TOOLS}/tools-config\" -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-gen-toc\" -f \"${workspaceFolder}/tools/alif/e7_hp.json\" && sudo -E \"${env:ALIF_SE_TOOLS}/app-write-mram\" -p"
+            "command": "sudo ./app-write-mram -p",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] Gen HP TOC"
             ],
-            "group": "test",
-            "problemMatcher": []
         },
         {
             "label": "Clean",
@@ -116,6 +132,9 @@
             "type": "shell",
             "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -e APP",
             "group": "build",
+            "dependsOn": [
+                "tools-config"
+            ],
         },
         {
             "label": "Build stubs",
@@ -143,6 +162,77 @@
             "group": {
                 "kind": "build",
             },
-        }
+        },
+        // Subtasks used by other tasks
+        {
+            "label": "[subtask] tools-config",
+            "type": "shell",
+            "command": "sudo ./tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\"",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+        },
+        {
+            "label": "[subtask] Copy HP .bin",
+            "type": "shell",
+            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ./build/images/hp_app.bin",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] tools-config"
+            ],
+        },
+        {
+            "label": "[subtask] Copy HE .bin",
+            "type": "shell",
+            "command": "sudo cp -f ${workspaceFolder}/build/zephyr/zephyr.bin ./build/images/he_app.bin",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] tools-config"
+            ],
+        },
+        {
+            "label": "[subtask] Gen HP TOC",
+            "type": "shell",
+            "command": "sudo ./app-gen-toc -f ${workspaceFolder}/tools/alif/e7_hp.json",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] Copy HP .bin"
+            ],
+        },
+        {
+            "label": "[subtask] Gen HE TOC",
+            "type": "shell",
+            "command": "sudo ./app-gen-toc -f ${workspaceFolder}/tools/alif/e7_he.json",
+            "group": "build",
+            "options": {
+                "cwd": "${env:ALIF_SE_TOOLS}"
+            },
+            "dependsOn": [
+                "[subtask] Copy HE .bin"
+            ],
+        },
     ],
+    "inputs": [
+        {
+            "type": "pickString",
+            "id": "board_test",
+            "description": "Target board",
+            "options": [
+                "native_sim",
+                "alif_e7_dk/ae722f80f55d5xx/rtss_he",
+                "alif_e7_dk/ae722f80f55d5xx/rtss_hp"
+            ],
+            "default": "native_sim"
+        },
+    ]
 }
