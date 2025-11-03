@@ -12,8 +12,6 @@ auto main() -> int
 {
   int ret;
 
-  k_msleep(1000);
-
   if (!gpio_is_ready_dt(&led))
   {
     LOG_ERR("Led not ready\n");
@@ -37,6 +35,6 @@ auto main() -> int
       return 0;
     }
 
-    k_msleep(1000);
+    k_msleep(500);
   }
 }
