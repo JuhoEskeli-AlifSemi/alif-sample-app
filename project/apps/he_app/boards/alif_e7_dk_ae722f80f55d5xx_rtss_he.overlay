@@ -46,7 +46,8 @@
 			compatible = "infineon,cyw43xxx-bt-hci";
 			status = "okay";
 			bt-reg-on-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
-			fw-download-speed = <3000000>;
+			/* Temporarily use 115200 for firmware download to test if baudrate change is the issue */
+			fw-download-speed = <115200>;
 		};
 	};
 };
