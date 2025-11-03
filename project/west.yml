@@ -20,6 +20,7 @@ manifest:
           - mbedtls
           - hal_alif_2.0    
           - hal_ethos_u
+          - hal_infineon
 
     - name: mcuboot_alif
       remote: alif
