@@ -6,7 +6,7 @@
         "signed": true
     },
     "Zephyr-RTSS-HE-Boot": {
-        "binary": "alif_e7_dk_ae722f80f55d5xx_rtss_he_bootloader.bin",
+        "binary": "he_app_bootloader.bin",
         "version": "1.0.0",
         "cpu_id": "M55_HE",
         "mramAddress": "0x80000000",
@@ -18,7 +18,7 @@
         "signed": false
     },
     "Zephyr-RTSS-HE": {
-        "binary": "alif_e7_dk_ae722f80f55d5xx_rtss_he.signed.bin",
+        "binary": "he_app.signed.bin",
         "version": "1.0.0",
         "cpu_id": "M55_HE",
         "mramAddress": "0x80010000",
