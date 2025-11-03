@@ -1,0 +1,48 @@
+{
+    "DEVICE": {
+        "disabled": false,
+        "binary": "app-device-config.json",
+        "version": "0.5.00",
+        "signed": true
+    },
+    "Zephyr-RTSS-HE-Boot": {
+        "binary": "alif_e7_dk_ae722f80f55d5xx_rtss_he_bootloader.bin",
+        "version": "1.0.0",
+        "cpu_id": "M55_HE",
+        "mramAddress": "0x80000000",
+        "loadAddress": "0x58000000",
+        "flags": [
+            "boot",
+            "load"
+        ],
+        "signed": false
+    },
+    "Zephyr-RTSS-HE": {
+        "binary": "alif_e7_dk_ae722f80f55d5xx_rtss_he.signed.bin",
+        "version": "1.0.0",
+        "cpu_id": "M55_HE",
+        "mramAddress": "0x80010000",
+        "flags": [],
+        "signed": false
+    },
+    "Zephyr-RTSS-HP-Boot": {
+        "binary": "alif_e7_dk_ae722f80f55d5xx_rtss_hp_bootloader.bin",
+        "version": "1.0.0",
+        "cpu_id": "M55_HP",
+        "mramAddress": "0x80200000",
+        "loadAddress": "0x50000000",
+        "flags": [
+            "boot",
+            "load"
+        ],
+        "signed": false
+    },
+    "Zephyr-RTSS-HP": {
+        "binary": "alif_e7_dk_ae722f80f55d5xx_rtss_hp.signed.bin",
+        "version": "1.0.0",
+        "cpu_id": "M55_HP",
+        "mramAddress": "0x80210000",
+        "flags": [],
+        "signed": false
+    }
+}

@@ -66,7 +66,7 @@
             "command": "sh",
             "args": [
                 "-c",
-                "CONFIG=$(cat build/.config 2>/dev/null) && case \"$CONFIG\" in he) echo Building HE only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he;; hp) echo Building HP only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_hp) echo Building HE and HP... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; *) echo Error: Unknown configuration && exit 1;; esac"
+                "CONFIG=$(cat build/.config 2>/dev/null) && case \"$CONFIG\" in he) echo Building HE only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he;; hp) echo Building HP only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_hp) echo Building HE and HP... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_mcuboot) echo Building HE with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he --sysbuild;; hp_mcuboot) echo Building HP with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp --sysbuild;; he_hp_mcuboot) echo Building HE and HP with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he --sysbuild && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp --sysbuild;; *) echo Error: Unknown configuration && exit 1;; esac"
             ],
             "group": {
                 "kind": "build",
@@ -154,7 +154,7 @@
             "command": "sh",
             "args": [
                 "-c",
-                "CONFIG=$(cat ${workspaceFolder}/build/.config 2>/dev/null || echo he_hp) && case \"$CONFIG\" in he) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin;; hp) sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_hp) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin && sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; *) echo Error: Unknown configuration && exit 1;; esac"
+                "CONFIG=$(cat ${workspaceFolder}/build/.config 2>/dev/null || echo he_hp) && case \"$CONFIG\" in he) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin;; hp) sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_hp) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin && sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_mcuboot) sudo cp -f ${workspaceFolder}/build/he/mcuboot/zephyr/zephyr.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_he_bootloader.bin && sudo cp -f ${workspaceFolder}/build/he/he_app/zephyr/zephyr.signed.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_he.signed.bin;; hp_mcuboot) sudo cp -f ${workspaceFolder}/build/hp/mcuboot/zephyr/zephyr.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_hp_bootloader.bin && sudo cp -f ${workspaceFolder}/build/hp/hp_app/zephyr/zephyr.signed.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_hp.signed.bin;; he_hp_mcuboot) sudo cp -f ${workspaceFolder}/build/he/mcuboot/zephyr/zephyr.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_he_bootloader.bin && sudo cp -f ${workspaceFolder}/build/he/he_app/zephyr/zephyr.signed.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_he.signed.bin && sudo cp -f ${workspaceFolder}/build/hp/mcuboot/zephyr/zephyr.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_hp_bootloader.bin && sudo cp -f ${workspaceFolder}/build/hp/hp_app/zephyr/zephyr.signed.bin ./build/images/alif_e7_dk_ae722f80f55d5xx_rtss_hp.signed.bin;; *) echo Error: Unknown configuration && exit 1;; esac"
             ],
             "group": "build",
             "options": {
@@ -198,6 +198,18 @@
                 {
                     "label": "HE & HP",
                     "value": "he_hp"
+                },
+                {
+                    "label": "HE only with MCUboot",
+                    "value": "he_mcuboot"
+                },
+                {
+                    "label": "HP only with MCUboot",
+                    "value": "hp_mcuboot"
+                },
+                {
+                    "label": "HE & HP with MCUboot",
+                    "value": "he_hp_mcuboot"
                 }
             ],
             "default": "he_hp",
