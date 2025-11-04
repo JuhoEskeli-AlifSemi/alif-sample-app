@@ -1,5 +1,3 @@
-# Confidential - Copyright PA.COTTE: All rights reserved
-
 description: Native Alif E7 Ethernet Controller
 
 compatible: "zephyr,eth-alif"

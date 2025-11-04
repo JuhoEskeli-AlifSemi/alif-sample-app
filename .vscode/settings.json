@@ -67,6 +67,11 @@
             "label": "$(trash) Clean",
             "task": "Clean",
             "tooltip": "Delete build directory"
+        },
+        {
+            "label": "$(beaker) Run tests",
+            "task": "Run tests",
+            "tooltip": "Build and run all tests on native sim"
         }
     ],
     "cortex-debug.variableUseNaturalFormat": false,

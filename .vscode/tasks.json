@@ -116,6 +116,26 @@
             "problemMatcher": []
         },
         {
+            "label": "Run tests",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "(cd ${workspaceFolder}/project/apps/he_app/tests && west build -b native_sim --pristine && west build -t run) && (cd ${workspaceFolder}/project/apps/hp_app/tests && west build -b native_sim --pristine && west build -t run)"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Maintenance",
             "type": "shell",
             "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/maintenance",
