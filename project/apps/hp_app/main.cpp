@@ -1,6 +1,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/fs/fs.h>
+#include <zephyr/fs/littlefs.h>
 
 #define RED_LED_NODE DT_ALIAS(led0)
 
@@ -11,6 +13,18 @@ LOG_MODULE_REGISTER(app);
 auto main() -> int
 {
   int ret;
+
+  // Mount LittleFS
+  FS_FSTAB_DECLARE_ENTRY(DT_NODELABEL(lfshp));
+  ret = fs_mount(&FS_FSTAB_ENTRY(DT_NODELABEL(lfshp)));
+  if (ret < 0)
+  {
+    LOG_ERR("Error mounting littlefs [%d]", ret);
+  }
+  else
+  {
+    LOG_INF("LittleFS mounted successfully at /data");
+  }
 
   if (!gpio_is_ready_dt(&led))
   {

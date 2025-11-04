@@ -15,11 +15,12 @@ manifest:
       repo-path: zephyr_alif
       import:
         name-allowlist:
-          - segger       
+          - segger
           - liblc3
           - mbedtls
-          - hal_alif   
+          - hal_alif_2.0
           - hal_ethos_u
+          - littlefs
 
     - name: mcuboot_alif
       remote: alif
