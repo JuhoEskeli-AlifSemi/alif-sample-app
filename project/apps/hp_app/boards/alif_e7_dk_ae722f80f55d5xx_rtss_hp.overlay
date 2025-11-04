@@ -1,0 +1,53 @@
+&pinctrl {
+	pinctrl_uart3: pinctrl_uart3 {
+		group0 {
+			pinmux = <PIN_P1_2__UART3_RX_A>,
+				 <PIN_P1_3__UART3_TX_A>,
+				 <PIN_P7_2__UART3_CTS_B>,
+				 <PIN_P7_3__UART3_RTS_B>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,uart-mcumgr = &uart7;
+		zephyr,bt-uart = &uart3;
+		zephyr,bt-hci = &bt_hci_uart;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio7 {
+	status = "okay";
+};
+
+&uart3 {
+	status = "okay";
+	current-speed = <115200>;
+	hw-flow-control;
+
+	/* HCI-UART pins */
+	pinctrl-0 = <&pinctrl_uart3>;
+	pinctrl-names = "default";
+
+	bt_hci_uart: bt_hci_uart {
+		compatible = "zephyr,bt-hci-uart";
+		status = "okay";
+
+		bt-hci {
+			compatible = "infineon,cyw43xxx-bt-hci";
+			status = "okay";
+			bt-reg-on-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+			/* Temporarily use 115200 for firmware download to test if baudrate change is the issue */
+			fw-download-speed = <115200>;
+		};
+	};
+};
