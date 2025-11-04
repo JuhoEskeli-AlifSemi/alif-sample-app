@@ -1,3 +1,19 @@
+&flash_storage {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* LFS image partitions */
+		data_partition_he: partition@0 {
+			label = "data_partition_he";
+			reg = <0x00000000 DT_SIZE_M(1)>;
+		};
+		data_partition_hp: partition@100000 {
+			label = "data_partition_hp";
+			reg = <0x00100000 DT_SIZE_M(1)>;
+		};
+	};
+};
 
 &mram_storage {
 	partitions {
