@@ -15,7 +15,8 @@ auto main() -> int
 {
   int ret;
 
-  // Mount LittleFS
+// Mount LittleFS
+#if 1
   FS_FSTAB_DECLARE_ENTRY(DT_NODELABEL(lfshe));
   ret = fs_mount(&FS_FSTAB_ENTRY(DT_NODELABEL(lfshe)));
   if (ret < 0)
@@ -26,6 +27,7 @@ auto main() -> int
   {
     LOG_INF("LittleFS mounted successfully at /data");
   }
+#endif
 
   if (!gpio_is_ready_dt(&led))
   {

@@ -2,7 +2,7 @@ manifest:
     
   remotes:
     - name: alif
-      url-base: https://github.com/alifsemi
+      url-base: https://github.com/JuhoEskeli-AlifSemi
     - name: armmbed
       url-base: https://github.com/ARMmbed
     - name: pacotte
@@ -11,14 +11,14 @@ manifest:
   projects:
     - name: zephyr
       remote: alif
-      revision: main
-      repo-path: zephyr_alif_2.0
+      revision: ospi_hwsem
+      repo-path: zephyr_alif
       import:
         name-allowlist:
           - segger
           - liblc3
           - mbedtls
-          - hal_alif_2.0
+          - hal_alif
           - hal_ethos_u
           - littlefs
 

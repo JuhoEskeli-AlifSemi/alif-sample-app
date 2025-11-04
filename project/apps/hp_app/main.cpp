@@ -14,6 +14,9 @@ auto main() -> int
 {
   int ret;
 
+  LOG_INF("Hello from HP");
+
+#if 0
   // Mount LittleFS
   FS_FSTAB_DECLARE_ENTRY(DT_NODELABEL(lfshp));
   ret = fs_mount(&FS_FSTAB_ENTRY(DT_NODELABEL(lfshp)));
@@ -26,6 +29,7 @@ auto main() -> int
     LOG_INF("LittleFS mounted successfully at /data");
   }
 
+#endif
   if (!gpio_is_ready_dt(&led))
   {
     LOG_ERR("Led not ready\n");
@@ -49,6 +53,6 @@ auto main() -> int
       return 0;
     }
 
-    k_msleep(500);
+    k_msleep(10000);
   }
 }
