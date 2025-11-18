@@ -1,0 +1,5 @@
+name: Test2_LP v7
+build:
+  cmake: .
+  depends:
+    - edge-impulse-sdk-zephyr
