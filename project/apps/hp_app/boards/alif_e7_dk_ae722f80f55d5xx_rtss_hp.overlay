@@ -1,23 +1,14 @@
-&flash_storage {
+
+&mram_storage {
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
-		/* LFS image partitions */
-		data_partition_he: partition@0 {
-			label = "data_partition_he";
-			reg = <0x00000000 DT_SIZE_M(1)>;
-		};
-		data_partition_hp: partition@100000 {
-			label = "data_partition_hp";
-			reg = <0x00100000 DT_SIZE_M(1)>;
+		factory_partition: partition@500000 {
+			label = "factory";
+			reg = <0x000500000 DT_SIZE_K(100)>;
 		};
 	};
-};
-
-&ospi1 {
-	pinctrl-0 = <&pinctrl_flash>;
-	status = "okay";
 };
 
 / {
@@ -30,7 +21,7 @@
 			cache-size = <256>;
 			lookahead-size = <64>;
 			block-cycles = <10000>;// 10k cycles
-			partition = <&data_partition_hp>;
+			partition = <&factory_partition>;
 			mount-point = "/data";
 		};
 	};
