@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.13.1)
 
 set(EXTRA_CONF_FILE ../../base.conf)
 
+# Add lfs-mram snippet needed for mram lfs support
+add_definitions(-DSNIPPET=alif-lfs-mram)
+
 # adds out-of-tree custom drivers as a Zephyr extra module (this line should be above the find_package line)
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 list(APPEND ZEPHYR_EXTRA_MODULES ${PROJECT_DIR}/drivers)
