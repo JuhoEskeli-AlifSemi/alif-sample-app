@@ -79,7 +79,7 @@ sdhc: &sdhc {
 		compatible = "infineon,airoc-wifi";
 
 		/* Wi-Fi control gpios */
+		wifi-host-wake-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;  /* WL_HOST_WAKE */
 		wifi-reg-on-gpios    = <&gpio0 1 GPIO_ACTIVE_HIGH>;  /* WL_REG_ON */
-		wifi-host-wake-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;  /* WL_HOST_WAKE OOB - active high for falling edge trigger */
 	};
 };
