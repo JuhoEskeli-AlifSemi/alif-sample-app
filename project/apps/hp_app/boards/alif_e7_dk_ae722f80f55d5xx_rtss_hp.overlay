@@ -1,0 +1,14 @@
+&adc24 {
+	status = "okay";
+	pinctrl-0 = <&pinctrl_adc24>;
+	pinctrl-names = "default";
+};
+
+&pinctrl {
+	/* Configuration ADC24 pour P0_0 (CH0) */
+	pinctrl_adc24: pinctrl_adc24 {
+		group0 {
+			pinmux = <PIN_P0_0__ANA_S0>;
+		};
+	};
+};
