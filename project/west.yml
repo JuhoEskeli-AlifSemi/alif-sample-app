@@ -18,7 +18,7 @@ manifest:
           - segger       
           - liblc3
           - mbedtls
-          - hal_alif   
+          - hal_alif    
           - hal_ethos_u
           - hal_infineon
 
