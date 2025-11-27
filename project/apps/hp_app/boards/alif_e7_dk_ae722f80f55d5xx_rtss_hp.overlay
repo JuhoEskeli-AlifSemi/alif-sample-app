@@ -2,13 +2,16 @@
 	status = "okay";
 	pinctrl-0 = <&pinctrl_adc24>;
 	pinctrl-names = "default";
+	adc_channel_scan = "MULTIPLE_CHANNEL_SCAN";
+	adc_conversion_mode = "CONTINUOUS_CONVERSION";  /* Mode continu */
 };
 
 &pinctrl {
-	/* Configuration ADC24 pour P0_0 (CH0) */
+	/* Configuration ADC24 pour P0_0 (CH0) et P0_1 (CH1) */
 	pinctrl_adc24: pinctrl_adc24 {
 		group0 {
-			pinmux = <PIN_P0_0__ANA_S0>;
+			pinmux = <PIN_P0_0__ANA_S0>,
+				 <PIN_P0_1__ANA_S1>;
 		};
 	};
 };

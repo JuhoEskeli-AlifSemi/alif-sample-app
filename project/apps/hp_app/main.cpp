@@ -14,19 +14,27 @@ LOG_MODULE_REGISTER(app);
 static const struct device *adc_dev = DEVICE_DT_GET(DT_NODELABEL(adc24));
 
 // Configuration du channel 0 (P0_0)
-static const struct adc_channel_cfg channel_cfg = {
+static const struct adc_channel_cfg channel0_cfg = {
     .gain = ADC_GAIN_1,
     .reference = ADC_REF_VDD_1,
     .acquisition_time = ADC_ACQ_TIME_DEFAULT,
     .channel_id = 0,
     .differential = 0};
 
+// Configuration du channel 1 (P0_1)
+static const struct adc_channel_cfg channel1_cfg = {
+    .gain = ADC_GAIN_1,
+    .reference = ADC_REF_VDD_1,
+    .acquisition_time = ADC_ACQ_TIME_DEFAULT,
+    .channel_id = 1,
+    .differential = 0};
+
 auto main() -> int
 {
   int ret;
-  uint32_t buf; // ADC24 nécessite 4 octets (32 bits)
+  uint32_t buf[2]; // Buffer pour 2 channels (CH0 et CH1)
   struct adc_sequence sequence = {
-      .buffer = &buf,
+      .buffer = buf,
       .buffer_size = sizeof(buf),
   };
 
@@ -51,17 +59,27 @@ auto main() -> int
     return 0;
   }
 
-  ret = adc_channel_setup(adc_dev, &channel_cfg);
+  // Configuration channel 0
+  ret = adc_channel_setup(adc_dev, &channel0_cfg);
   if (ret < 0)
   {
-    LOG_ERR("Could not setup ADC channel (%d)", ret);
+    LOG_ERR("Could not setup ADC channel 0 (%d)", ret);
     return 0;
   }
 
-  // Configuration de la séquence ADC
-  sequence.channels = BIT(0); // Channel 0 (P0_0)
+  // Configuration channel 1
+  ret = adc_channel_setup(adc_dev, &channel1_cfg);
+  if (ret < 0)
+  {
+    LOG_ERR("Could not setup ADC channel 1 (%d)", ret);
+    return 0;
+  }
 
-  LOG_INF("ADC24 initialized on P0_0 - Single shot mode every 1s");
+  // Configuration de la séquence ADC - Lire les deux channels
+  sequence.channels = BIT(0) | BIT(1); // Channel 0 (P0_0) et Channel 1 (P0_1)
+
+  LOG_INF("ADC24 initialized: CH0 (P0_0) and CH1 (P0_1)");
+  LOG_INF("Continuous conversion mode - Reading every 1s");
 
   while (true)
   {
@@ -73,7 +91,7 @@ auto main() -> int
       return 0;
     }
 
-    // Lecture ADC en single shot
+    // Lecture ADC en mode continu
     ret = adc_read(adc_dev, &sequence);
     if (ret < 0)
     {
@@ -81,8 +99,8 @@ auto main() -> int
     }
     else
     {
-      // Afficher la valeur brute
-      LOG_INF("ADC P0_0: raw value = %d", buf);
+      // Afficher les valeurs des deux channels
+      LOG_INF("CH0 (P0_0): %u | CH1 (P0_1): %u", buf[0], buf[1]);
     }
 
     // Attendre 1 seconde
