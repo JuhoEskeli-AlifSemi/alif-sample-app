@@ -24,7 +24,9 @@ sudo udevadm control --reload
 
 ## Description
 
-With LFS on OSPI, the HE core crashes when running in dual-boot mode with the HP core, whereas everything works correctly when either HP or HE runs alone.
+This example runs the https://github.com/alifsemi/zephyr_alif/tree/main/samples/drivers/spi_flash test on HE & HP cores. The example has been modified so that OSPI1_RESERVE() is called before OSPI flash operations. And when operation is finished, OSPI1_RELEASE() is called. These operations use HW semaphore to synchronize resource access. The operations also toggle OSPI1 IRQ on and off, so when the other core is doing something with OSPI1, it does not trigger IRQ routines on the another core.
+
+Modification has also been made to flash_ospi_is25wx.c in the referred zephyr_alif repository. The modifications block entry into init routine using HW semaphores. IRQ for OSPI1 is also turned off at the end of the initialization sequence. In addition pending interrupt is cleared before enabling IRQ in the init routine.
 
 ### Steps to Reproduce
 
@@ -38,22 +40,49 @@ With LFS on OSPI, the HE core crashes when running in dual-boot mode with the HP
 7. Open serial monitor on HE UART and HP UART
 
 ```
-[00:00:00.000,000] <err> os: ***** HARD FAULT *****
-[00:00:00.000,000] <err> os:   Fault escalation (see below)
-[00:00:00.000,000] <err> os: ***** USAGE FAULT *****
-[00:00:00.000,000] <err> os:   Illegal use of the EPSR
-[00:00:00.000,000] <err> os: r0/a1:  0x00000001  r1/a2:  0x00000000  r2/a3:  0x00000000
-[00:00:00.000,000] <err> os: r3/a4:  0x00000000 r12/ip:  0x00000000 r14/lr:  0x80013681
-[00:00:00.000,000] <err> os:  xpsr:  0x20000071
-[00:00:00.000,000] <err> os: s[ 0]:  0x20000f6c  s[ 1]:  0x800124f7  s[ 2]:  0x00000061  s[ 3]:  0x8000421b
-[00:00:00.000,000] <err> os: s[ 4]:  0x00000000  s[ 5]:  0xfffffffd  s[ 6]:  0xc5044e98  s[ 7]:  0x3edb9c51
-[00:00:00.000,000] <err> os: s[ 8]:  0x64403a7e  s[ 9]:  0xce0a75f1  s[10]:  0xc2380a21  s[11]:  0x033ecded
-[00:00:00.000,000] <err> os: s[12]:  0x3b84cf7c  s[13]:  0x5e5b606c  s[14]:  0xa54b8553  s[15]:  0x750fd133
-[00:00:00.000,000] <err> os: fpscr:  0x5f4c763f
-[00:00:00.000,000] <err> os: Faulting instruction address (r15/pc): 0x00000000
-[00:00:00.000,000] <err> os: >>> ZEPHYR FATAL ERROR 35: Unknown error on CPU 0
-[00:00:00.000,000] <err> os: Fault during interrupt handling
+Hello from HP
 
-[00:00:00.000,000] <err> os: Current thread: 0x20000a68 (main)
-[00:00:00.000,000] <err> os: Halting system
+ospi_flash@0 OSPI flash testing
+========================================
+****Flash Configured Parameters******
+* Num Of Sectors : 16384
+* Sector Size : 4096
+* Page Size : 4096
+* Erase value : 255
+* Write Blk Size: 1
+* Total Size in MB: 64
+
+Test 1: Flash erase
+Flash erase succeeded!
+
+Test 1: Flash write
+Attempting to write 4 bytes
+
+Test 1: Flash read
+Data read matches data written. Good!!
+Sleep for 5 seconds.
+*** Booting Zephyr OS build 15dd44461e60 ***
+
+Hello from HE
+
+ospi_flash@0 OSPI flash testing
+========================================
+****Flash Configured Parameters******
+* Num Of Sectors : 16384
+* Sector Size : 4096
+* Page Size : 4096
+* Erase value : 255
+* Write Blk Size: 1
+* Total Size in MB: 64
+
+Test 1: Flash erase
+Flash erase succeeded!
+
+Test 1: Flash write
+Attempting to write 4 bytes
+
+Test 1: Flash read
+Data read matches data written. Good!!
+Sleep for 5 seconds.
+*** Booting Zephyr OS build 15dd44461e60 ***
 ```
