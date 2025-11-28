@@ -1,8 +1,10 @@
 manifest:
     
   remotes:
-    - name: alif
+    - name: JuhoEskeliAlif
       url-base: https://github.com/JuhoEskeli-AlifSemi
+    - name: alif
+      url-base: https://github.com/alifsemi
     - name: armmbed
       url-base: https://github.com/ARMmbed
     - name: pacotte
@@ -10,8 +12,8 @@ manifest:
 
   projects:
     - name: zephyr
-      remote: alif
-      revision: ospi_hwsem
+      remote: JuhoEskeliAlif
+      revision: ospi_sem
       repo-path: zephyr_alif
       import:
         name-allowlist:
