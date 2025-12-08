@@ -42,17 +42,17 @@
         {
             "label": "Configure",
             "type": "shell",
-            "command": "sh",
-            "args": [
-                "-c",
-                "mkdir -p build && echo \"${input:coreConfiguration}\" > build/.config && echo \"Configuration set to: ${input:coreConfiguration}\""
-            ],
+            "command": "echo \"Configuration set to: $(grep -oP '\"core\": \"\\K[^\"]*' .config/config.json)\"",
             "group": "build",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "dependsOrder": "sequence",
             "dependsOn": [
+                "[subtask] [config] Create empty configuration file",
+                "[subtask] [config] Set erase MRAM configuration",
+                "[subtask] [config] Set core configuration",
                 "Clean",
                 "Erase MRAM"
             ],
@@ -63,11 +63,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "sh",
-            "args": [
-                "-c",
-                "CONFIG=$(cat build/.config 2>/dev/null) && case \"$CONFIG\" in he) echo Building HE only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he;; hp) echo Building HP only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_hp) echo Building HE and HP... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_mcuboot) echo Building HE with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he --sysbuild;; hp_mcuboot) echo Building HP with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp --sysbuild;; he_hp_mcuboot) echo Building HE and HP with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he --sysbuild && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp --sysbuild;; *) echo Error: Unknown configuration && exit 1;; esac"
-            ],
+            "command": "CONFIG=$(grep -oP '\"core\": \"\\K[^\"]*' .config/config.json 2>/dev/null) && case \"$CONFIG\" in he) echo Building HE only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he;; hp) echo Building HP only... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_hp) echo Building HE and HP... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp;; he_mcuboot) echo Building HE with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he --sysbuild;; hp_mcuboot) echo Building HP with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp --sysbuild;; he_hp_mcuboot) echo Building HE and HP with MCUboot... && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_he project/apps/he_app -d build/he --sysbuild && west build -p auto -b alif_e7_dk/ae722f80f55d5xx/rtss_hp project/apps/hp_app -d build/hp --sysbuild;; *) echo Error: Unknown configuration && exit 1;; esac",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -105,7 +101,7 @@
         {
             "label": "Clean West",
             "type": "shell",
-            "command": "rm -rf .west build modules zephyr bootloader",
+            "command": "if [ \"${input:cleanWestConfirmation}\" = \"yes\" ]; then rm -rf .west build modules zephyr bootloader && echo \"Clean West completed\"; else echo \"Clean West cancelled\"; fi",
             "group": "build",
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -144,10 +140,10 @@
         {
             "label": "Erase MRAM",
             "type": "shell",
-            "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -e APP",
+            "command": "if grep -q '\"erase_mram\": true' ${workspaceFolder}/.config/config.json; then cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -e APP; else echo \"Erase MRAM skipped\"; fi",
             "group": "build",
             "dependsOn": [
-                "tools-config"
+                "[subtask] tools-config"
             ],
         },
         {
@@ -160,6 +156,41 @@
         },
         // Subtasks used by other tasks
         {
+            "label": "[subtask] [config] Create empty configuration file",
+            "type": "shell",
+            "command": "rm -rf .config && mkdir -p .config && echo '{\"erase_mram\": false, \"core\": \"\"}' > .config/config.json",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "[subtask] [config] Set erase MRAM configuration",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "sed -i \"s/\\\"erase_mram\\\": [^,]*/\\\"erase_mram\\\": ${input:eraseConfirmation}/\" .config/config.json && echo \"Erase MRAM configuration: ${input:eraseConfirmation}\""
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "[subtask] [config] Set core configuration",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "sed -i \"s/\\\"core\\\": \\\"[^\\\"]*\\\"/\\\"core\\\": \\\"${input:coreConfiguration}\\\"/\" .config/config.json && echo \"Core configuration: ${input:coreConfiguration}\""
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
             "label": "[subtask] tools-config",
             "type": "shell",
             "command": "sudo ./tools-config -p \"E7 (AE722F80F55D5LS) - 5.5 MRAM / 13.5 SRAM\" -r \"B4\"",
@@ -171,11 +202,7 @@
         {
             "label": "[subtask] Copy .bin",
             "type": "shell",
-            "command": "sh",
-            "args": [
-                "-c",
-                "CONFIG=$(cat ${workspaceFolder}/build/.config 2>/dev/null || echo he_hp) && case \"$CONFIG\" in he) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin;; hp) sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_hp) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin && sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_mcuboot) sudo cp -f ${workspaceFolder}/build/he/mcuboot/zephyr/zephyr.bin ./build/images/he_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/he/he_app/zephyr/zephyr.signed.bin ./build/images/he_app.signed.bin;; hp_mcuboot) sudo cp -f ${workspaceFolder}/build/hp/mcuboot/zephyr/zephyr.bin ./build/images/hp_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/hp/hp_app/zephyr/zephyr.signed.bin ./build/images/hp_app.signed.bin;; he_hp_mcuboot) sudo cp -f ${workspaceFolder}/build/he/mcuboot/zephyr/zephyr.bin ./build/images/he_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/he/he_app/zephyr/zephyr.signed.bin ./build/images/he_app.signed.bin && sudo cp -f ${workspaceFolder}/build/hp/mcuboot/zephyr/zephyr.bin ./build/images/hp_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/hp/hp_app/zephyr/zephyr.signed.bin ./build/images/hp_app.signed.bin;; *) echo Error: Unknown configuration && exit 1;; esac"
-            ],
+            "command": "CONFIG=$(grep -oP '\"core\": \"\\K[^\"]*' ${workspaceFolder}/.config/config.json 2>/dev/null || echo he_hp) && case \"$CONFIG\" in he) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin;; hp) sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_hp) sudo cp -f ${workspaceFolder}/build/he/zephyr/zephyr.bin ./build/images/he_app.bin && sudo cp -f ${workspaceFolder}/build/hp/zephyr/zephyr.bin ./build/images/hp_app.bin;; he_mcuboot) sudo cp -f ${workspaceFolder}/build/he/mcuboot/zephyr/zephyr.bin ./build/images/he_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/he/he_app/zephyr/zephyr.signed.bin ./build/images/he_app.signed.bin;; hp_mcuboot) sudo cp -f ${workspaceFolder}/build/hp/mcuboot/zephyr/zephyr.bin ./build/images/hp_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/hp/hp_app/zephyr/zephyr.signed.bin ./build/images/hp_app.signed.bin;; he_hp_mcuboot) sudo cp -f ${workspaceFolder}/build/he/mcuboot/zephyr/zephyr.bin ./build/images/he_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/he/he_app/zephyr/zephyr.signed.bin ./build/images/he_app.signed.bin && sudo cp -f ${workspaceFolder}/build/hp/mcuboot/zephyr/zephyr.bin ./build/images/hp_app_bootloader.bin && sudo cp -f ${workspaceFolder}/build/hp/hp_app/zephyr/zephyr.signed.bin ./build/images/hp_app.signed.bin;; *) echo Error: Unknown configuration && exit 1;; esac",
             "group": "build",
             "options": {
                 "cwd": "${env:ALIF_SE_TOOLS}"
@@ -187,11 +214,7 @@
         {
             "label": "[subtask] Gen TOC",
             "type": "shell",
-            "command": "sh",
-            "args": [
-                "-c",
-                "CONFIG=$(cat ${workspaceFolder}/build/.config 2>/dev/null || echo he_hp) && sudo ./app-gen-toc -f ${workspaceFolder}/project/boards/toc-configs/e7_${CONFIG}.json"
-            ],
+            "command": "CONFIG=$(grep -oP '\"core\": \"\\K[^\"]*' ${workspaceFolder}/.config/config.json 2>/dev/null || echo he_hp) && sudo ./app-gen-toc -f ${workspaceFolder}/project/boards/toc-configs/e7_${CONFIG}.json",
             "group": "build",
             "options": {
                 "cwd": "${env:ALIF_SE_TOOLS}"
@@ -208,31 +231,63 @@
             "description": "Core configuration",
             "options": [
                 {
-                    "label": "HE only",
+                    "label": "🔵 HE only",
                     "value": "he"
                 },
                 {
-                    "label": "HP only",
+                    "label": "🟠 HP only",
                     "value": "hp"
                 },
                 {
-                    "label": "HE & HP",
+                    "label": "🟣 HE & HP",
                     "value": "he_hp"
                 },
                 {
-                    "label": "HE only with MCUboot",
+                    "label": "🔒 🔵 HE only with MCUboot",
                     "value": "he_mcuboot"
                 },
                 {
-                    "label": "HP only with MCUboot",
+                    "label": "🔒 🟠 HP only with MCUboot",
                     "value": "hp_mcuboot"
                 },
                 {
-                    "label": "HE & HP with MCUboot",
+                    "label": "🔒 🟣 HE & HP with MCUboot",
                     "value": "he_hp_mcuboot"
                 }
             ],
             "default": "he_hp",
+        },
+        {
+            "type": "pickString",
+            "id": "eraseConfirmation",
+            "description": "Erase MRAM configuration",
+            "options": [
+                {
+                    "label": "🧹 Erase MRAM",
+                    "value": "true"
+                },
+                {
+                    "label": "❄️ Keep MRAM",
+                    "value": "false"
+                }
+            ],
+            "default": "true"
+        },
+        {
+            "type": "pickString",
+            "id": "cleanWestConfirmation",
+            "description": "⚠️ ATTENTION: Cette action va supprimer .west, build, modules, zephyr et bootloader",
+            "options": [
+                {
+                    "label": "🚫 Annuler",
+                    "value": "no"
+                },
+                {
+                    "label": "🗑️ Tout effacer",
+                    "value": "yes"
+                }
+            ],
+            "default": "no"
         }
     ]
 }
