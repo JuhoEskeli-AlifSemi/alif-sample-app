@@ -4,15 +4,62 @@
 #include <zephyr/fs/fs.h>
 #include <zephyr/fs/littlefs.h>
 
+// hwsem
+#include <zephyr/drivers/hwsem_ipm.h>
+#define DEVICE_DT_GET_AND_COMMA(node_id) DEVICE_DT_GET(node_id),
+
+/* Generate a list of devices for all instances of the "compat" */
+#define DEVS_FOR_DT_COMPAT(compat) DT_FOREACH_STATUS_OKAY(compat, DEVICE_DT_GET_AND_COMMA)
+
+static const struct device *const devices[] = {
+#ifdef CONFIG_ALIF_HWSEM
+	DEVS_FOR_DT_COMPAT(alif_hwsem)
+#endif
+};
+
+#if defined(CONFIG_SOC_AE722F80F55D5XX_RTSS_HP)
+#define MASTER_ID 0xF00DF00D
+#elif defined(CONFIG_SOC_AE722F80F55D5XX_RTSS_HE)
+#define MASTER_ID 0xC0DEC0DE
+#endif
+
+#define OSPI1_IRQ (IRQn_Type)97
+
 #define RED_LED_NODE DT_ALIAS(led0)
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(RED_LED_NODE, gpios);
 
 LOG_MODULE_REGISTER(app);
 
+static void OSPI1_RESERVE() {
+	/* Use only the single HWSEM device instance for this test */
+	const struct device *device = devices[0];
+
+	/* First trylock: can return 0 (success) or -EBUSY (busy, locked by another core) */
+	while (hwsem_trylock(device, MASTER_ID) != 0)
+	{
+		printf("Waiting for HWSEM.");
+		k_msleep(1000);
+	} /* spinwait for our turn */
+
+	// After init the IRQ is disabled
+	NVIC_EnableIRQ(OSPI1_IRQ);
+}
+
+static void OSPI1_RELEASE() {
+	/* Use only the single HWSEM device instance for this test */
+	const struct device *device = devices[0];
+
+	// After init the IRQ is disabled
+	NVIC_DisableIRQ(OSPI1_IRQ);
+	hwsem_unlock(device, MASTER_ID);
+}
+
 auto main() -> int
 {
   int ret;
+
+  OSPI1_RESERVE();
 
   // Mount LittleFS
   FS_FSTAB_DECLARE_ENTRY(DT_NODELABEL(lfshp));
@@ -25,6 +72,8 @@ auto main() -> int
   {
     LOG_INF("LittleFS mounted successfully at /data");
   }
+
+  OSPI1_RELEASE();
 
   if (!gpio_is_ready_dt(&led))
   {
