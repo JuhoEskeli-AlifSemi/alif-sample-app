@@ -147,7 +147,7 @@
             "command": "cd ${ALIF_SE_TOOLS} && sudo ${ALIF_SE_TOOLS}/app-write-mram -e APP",
             "group": "build",
             "dependsOn": [
-                "tools-config"
+                "[subtask] tools-config"
             ],
         },
         {

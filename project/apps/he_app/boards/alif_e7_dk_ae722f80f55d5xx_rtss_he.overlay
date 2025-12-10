@@ -55,3 +55,8 @@
 		zephyr,memory-region = "ETH_DMA";
 	};
 };
+
+&i3c0
+{
+	status="okay";
+};
