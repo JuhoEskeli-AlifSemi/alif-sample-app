@@ -24,6 +24,11 @@
 	aliases {
 		ethernet0 = &eth_alif;
 	};
+	
+	zephyr,user {
+		/* Test IRQ on P6.1 (rising edge) */
+		test-irq-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+	};
 
 	mdio {
 		#address-cells = <1>;
