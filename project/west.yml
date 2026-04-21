@@ -13,7 +13,7 @@ manifest:
   projects:
     - name: zephyr
       remote: juho
-      revision: gpio_shared
+      revision: per_bin_irqhandler
       repo-path: zephyr_alif
       import:
         name-allowlist:
