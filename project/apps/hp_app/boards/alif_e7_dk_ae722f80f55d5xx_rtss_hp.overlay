@@ -11,8 +11,13 @@
 	};
 };
 
+&hwsem0 {
+	status = "okay";
+};
 &gpio6 {
-	status = "disabled";
+	status = "okay";
+	/* HP acknowledges shared pin 1 (faster core does EOI) */
+	multicore-ack-pins = <1>;
 };
 &gpio4 {
 	status = "ok";

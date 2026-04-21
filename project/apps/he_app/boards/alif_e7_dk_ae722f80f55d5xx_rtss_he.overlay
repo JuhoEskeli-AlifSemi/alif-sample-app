@@ -60,3 +60,9 @@
 		zephyr,memory-region = "ETH_DMA";
 	};
 };
+
+&hwsem0 {
+	status = "okay";
+};
+
+/* HE uses pin 1 but does not acknowledge it (HP does EOI) */
