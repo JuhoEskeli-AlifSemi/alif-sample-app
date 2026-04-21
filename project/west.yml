@@ -7,11 +7,13 @@ manifest:
       url-base: https://github.com/ARMmbed
     - name: pacotte
       url-base: https://github.com/pa-cotte
+    - name: juho
+      url-base: https://github.com/JuhoEskeli-AlifSemi
 
   projects:
     - name: zephyr
-      remote: alif
-      revision: main
+      remote: juho
+      revision: gpio_shared
       repo-path: zephyr_alif
       import:
         name-allowlist:
