@@ -8,6 +8,18 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(RED_LED_NODE, gpios);
 
 LOG_MODULE_REGISTER(app);
 
+/* Test IRQ on P6.1 */
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), test_irq_gpios)
+static const struct gpio_dt_spec test_irq_pin = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_irq_gpios);
+static struct gpio_callback test_irq_cb_data;
+
+static void test_irq_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+  int val = gpio_pin_get_dt(&test_irq_pin);
+  LOG_INF("%s edge detected on P6.1 (HP)", val ? "Rising" : "Falling");
+}
+#endif
+
 auto main() -> int
 {
   int ret;
@@ -25,9 +37,39 @@ auto main() -> int
     return 0;
   }
 
+  /* Test IRQ on P6.1 : both edges */
+#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), test_irq_gpios)
+  if (!gpio_is_ready_dt(&test_irq_pin))
+  {
+    LOG_ERR("GPIO IRQ device not ready");
+  }
+  else
+  {
+    ret = gpio_pin_configure_dt(&test_irq_pin, GPIO_INPUT);
+    if (ret < 0)
+    {
+      LOG_ERR("GPIO IRQ configure failed: %d", ret);
+    }
+    else
+    {
+      gpio_init_callback(&test_irq_cb_data, test_irq_callback, BIT(test_irq_pin.pin));
+      gpio_add_callback(test_irq_pin.port, &test_irq_cb_data);
+      ret = gpio_pin_interrupt_configure_dt(&test_irq_pin, GPIO_INT_EDGE_BOTH);
+      if (ret < 0)
+      {
+        LOG_ERR("GPIO IRQ interrupt configure failed: %d", ret);
+      }
+      else
+      {
+        LOG_INF("IRQ configured on P6.1 (both edges, HP)");
+      }
+    }
+  }
+#endif
+
   while (true)
   {
-    LOG_INF("Blink from HP!");
+    // LOG_INF("Blink from HP!");
     ret = gpio_pin_toggle_dt(&led);
     if (ret < 0)
     {

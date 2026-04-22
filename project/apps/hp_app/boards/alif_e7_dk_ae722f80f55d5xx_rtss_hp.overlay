@@ -9,6 +9,11 @@
 			label = "LED1_R";
 		};
 	};
+
+	zephyr,user {
+		/* Test IRQ on P6.1 (same pin as HE, shared) */
+		test-irq-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+	};
 };
 
 &hwsem0 {
