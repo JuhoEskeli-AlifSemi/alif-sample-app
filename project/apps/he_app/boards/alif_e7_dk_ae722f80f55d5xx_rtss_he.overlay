@@ -28,6 +28,8 @@
 	zephyr,user {
 		/* Test IRQ on P6.1 (rising edge) */
 		test-irq-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+		/* Toggle output on P10.5, wire to P6.1 to trigger IRQ */
+		test-out-gpios = <&gpio10 5 GPIO_ACTIVE_HIGH>;
 	};
 
 	mdio {
@@ -60,3 +62,13 @@
 		zephyr,memory-region = "ETH_DMA";
 	};
 };
+
+&hwsem0 {
+	status = "okay";
+};
+
+&gpio10 {
+	status = "okay";
+};
+
+/* HE uses pin 1 but does not acknowledge it (HP does EOI) */
