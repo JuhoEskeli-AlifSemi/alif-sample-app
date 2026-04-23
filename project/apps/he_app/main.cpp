@@ -20,11 +20,6 @@ static void test_irq_callback(const struct device *dev, struct gpio_callback *cb
 }
 #endif
 
-/* Toggle output on P10.5 */
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), test_out_gpios)
-static const struct gpio_dt_spec test_out_pin = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_out_gpios);
-#endif
-
 auto main() -> int
 {
   int ret;
@@ -72,26 +67,6 @@ auto main() -> int
   }
 #endif
 
-  /* Configure P10.5 as toggle output */
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), test_out_gpios)
-  if (!gpio_is_ready_dt(&test_out_pin))
-  {
-    LOG_ERR("Test output GPIO not ready");
-  }
-  else
-  {
-    ret = gpio_pin_configure_dt(&test_out_pin, GPIO_OUTPUT_INACTIVE);
-    if (ret < 0)
-    {
-      LOG_ERR("Test output GPIO configure failed: %d", ret);
-    }
-    else
-    {
-      LOG_INF("P10.5 toggle output configured");
-    }
-  }
-#endif
-
   while (true)
   {
     // LOG_INF("Blink from HE!");
@@ -101,10 +76,6 @@ auto main() -> int
       LOG_ERR("Led toggle failed");
       return 0;
     }
-
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), test_out_gpios)
-    gpio_pin_toggle_dt(&test_out_pin);
-#endif
 
     k_msleep(500);
   }

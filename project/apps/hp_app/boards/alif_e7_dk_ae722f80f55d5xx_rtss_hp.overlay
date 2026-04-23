@@ -5,7 +5,7 @@
 		compatible = "gpio-leds";
 
 		aled0: led_0 {
-			gpios = <&gpio4 2 0>;
+			gpios = <&gpio6 2 0>;
 			label = "LED1_R";
 		};
 	};
@@ -19,9 +19,8 @@
 &hwsem0 {
 	status = "okay";
 };
+
 &gpio6 {
 	status = "okay";
 };
-&gpio4 {
-	status = "ok";
-};
+

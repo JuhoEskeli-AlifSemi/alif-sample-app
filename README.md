@@ -60,8 +60,9 @@ When both cores configure the same pin (e.g. P6.1) for edge interrupts:
 
 ### Test Setup
 
-- **HE core** toggles P10.5 as output every 500 ms.
-- **P10.5 is wired to P6.1** with a jumper.
+- **HE core** toggles GREEN LED (P6.4) as output every 500 ms.
+- **HP core** toggles RED LED (P6.2) as output every 500 ms.
+- **P6.2 (RED LED) is wired to P6.1** with a jumper.
 - **Both cores** configure P6.1 (gpio6 pin 1) as edge-both interrupt input.
 - Both cores log rising/falling edges independently:
   - HE: `"Rising edge detected on P6.1 (HE)"`
